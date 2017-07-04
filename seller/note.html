@@ -1,0 +1,53 @@
+
+1.vue.js适合移动端和高级浏览器的PC端，IE9以及其他的四大浏览器支持S5；
+2.数据驱动+组件化<===>vuejs的核心思想--MVVM框架
+   DOM是数据的自然映射（原生界面是手动触发DOM事件），指令对DOM进行封装，数据发生变化会通知指令对DOM 进行操作，数据驱动DOM的改变；
+2.1数据响应原理
+    在vue对象实例化的过程中会给数据对象通过ES5的Object.defineProperty添加getter和Setter，同时vue会对当前模板进行编译，每个模板指令都会生成对应的指令对象v-xx，同时每个数据对象都会对应一个Watcher,在每次计算模板指令中的指令的值的时候就会触发getter,getter就会将依赖注入到组件中并通知给Watcher,一旦数据对象发生变化就会触发Setter,Setter就会通知Watcher,此时Watcher就会对比新旧值如果发生改变就会通知指令，此时指令就会调用update方法将数据传递给DOM；
+2.2组件：
+   每个功能模块都是一个组件，读个组件构成组件树形成一个页面，每个组件都会就近
+3.前端MVVM框架：angualr.js(56K)/vue.js(gzip之后只有26K)/react.js(44K);学习了react的组件化（把一个页面抽成一个组件树，每个组件都有一个完整的生命周期）和angualr的指令；还有属于自己独特的计算属性；
+4.node版本应该在4以上 最好是在6
+5.npm install -g vue-cli
+5.Karma+Mocha前端的一个单元测试的库，界面测试的一般不会需要这个功能模块
+6.进入当前的项目目录---npm install ----npm dev启动项目
+7.每个组件都有template和script和style三个部分
+10:关于DPR = winodw.dpr = 物理像素/
+
+11.svg图片：形状颜色单一的小图片就会做成svg图片
+12：关于字体标签：icommon.io>IcoMoonApp>Import Icons导入所有的自己的SVG图片，选中所有的需要制作的字体的svg图片>点击Generate Font进行图片制作>proference进行相关设置（字体的名字 类名前缀 浏览器支持等）
+13.组件的一个很重要的维护规则就是就近维护，所以在创建一个组件的时候一般不直接在component文件夹下面直接创建.vue组件而是针对每个组件都单独建立一个文件夹，这个文件夹里面可能还会防止相关组建的图片等资源文件（对外隔离的文件并且方便组件代码的就近维护）；
+14 stylus 是css的一个语法处理器,类似有less/sass等，它的语法不需要大括号和分号，并且冒号也可以省略
+
+15 app.vue
+<script type="text/ecmascript-6">
+
+    //  引入模块，注册组件,暴露组件
+    import header from './components/header/header.vue';
+
+    const ERR_Ok = 0;
+    export default{
+        data() {
+            return {
+                seller: {},//初始化一个空对象；
+            }
+        },
+        created(){
+//一般到created阶段发送请求获取数据，在钩子函数中this都是指当前的vue实例（通过ES6的promise对象将异步请求作为同步处理）,这里就是App根组件实例化的时候的created；export default 就是将实例化的App根组件（cpmponent）暴露出去，所有的子组件(cpmponents)获取父组建的数据需要通过props属性暴露数据接口；
+            this.$http.get('/api/seller').then((res)=> {
+//        console.log(res.data);//一个对象，包含数据data属性和errno状态属性； console.log(this);//这个vue实例
+                res = res.body;
+                if (res.errno === ERR_Ok) {
+                    this.seller = res.data;
+//          console.log(this.seller);//vue 自动为数据对象添加了getter和setter监听属性的变化在__bo__:Observer对象中
+                }
+
+            })
+        },
+        components: {
+            "v-header": header
+        },
+    }
+
+
+</script>
